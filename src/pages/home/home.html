@@ -4,14 +4,51 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <h2>Welcome to Ionic!</h2>
-  <p>
-    This starter project comes with simple tabs-based layout for apps
-    that are going to primarily use a Tabbed UI.
-  </p>
-  <p>
-    Take a look at the <code>src/pages/</code> directory to add or change tabs,
-    update any existing page or create new pages.
-  </p>
+<ion-content>
+
+  <ion-card *ngIf="!sessionActive">
+    <ion-card-header>
+      Instructions
+    </ion-card-header>
+    <ion-card-content>
+      Press the bottom in the bottom right corner to start a new pedometer session. Once a session is activated, the exit button should appear where the session start button used to be.
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list *ngIf="sessionActive && sessionData">
+    <ion-item>
+      <h2>Device ID</h2>
+      <p>{{ sessionData.device }}</p>
+    </ion-item>
+    <ion-item>
+      <h2>Session ID</h2>
+      <p>{{ sessionData.session }}</p>
+    </ion-item>
+    <ion-item>
+      <h2>Timestamp</h2>
+      <p>{{ sessionData.timestamp }}</p>
+    </ion-item>
+    <ion-item>
+      <h2>Acceleration-X</h2>
+      <p>{{ sessionData.acceleration.x }}</p>
+    </ion-item>
+    <ion-item>
+      <h2>Acceleration-Y</h2>
+      <p>{{ sessionData.acceleration.y }}</p>
+    </ion-item>
+    <ion-item>
+      <h2>Acceleration-Z</h2>
+      <p>{{ sessionData.acceleration.z }}</p>
+    </ion-item>
+    <ion-item>
+      <h2>Number of Steps</h2>
+      <p>{{ sessionData.pedometer.numberOfSteps }}</p>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab right bottom>
+    <button *ngIf="!sessionActive" (click)="start()" ion-fab><ion-icon name="add"></ion-icon></button>
+    <button *ngIf="sessionActive" (click)="stop()" ion-fab color="danger"><ion-icon name="close"></ion-icon></button>
+  </ion-fab>
+
 </ion-content>

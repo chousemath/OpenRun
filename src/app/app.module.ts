@@ -10,6 +10,18 @@ import { TabsPage } from '../pages/tabs/tabs';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { Geolocation } from '@ionic-native/geolocation';
+import { Pedometer } from '@ionic-native/pedometer';
+import { Insomnia } from '@ionic-native/insomnia';
+import { Device } from '@ionic-native/device';
+import { DeviceMotion } from '@ionic-native/device-motion';
+import { GoogleMaps } from '@ionic-native/google-maps';
+
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+
+import { firebaseConfig } from '../environments/environment';
+import { PedometerProvider } from '../providers/pedometer/pedometer';
 
 @NgModule({
   declarations: [
@@ -21,7 +33,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFireDatabaseModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -34,7 +48,13 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    Geolocation,
+    Pedometer,
+    Insomnia,
+    Device,
+    DeviceMotion,
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    PedometerProvider
   ]
 })
 export class AppModule {}
