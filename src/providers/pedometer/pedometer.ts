@@ -5,8 +5,10 @@ import { Device } from '@ionic-native/device';
 import { Pedometer, IPedometerData } from '@ionic-native/pedometer';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation';
 import { DeviceMotion, DeviceMotionAccelerationData } from '@ionic-native/device-motion';
+import { Vibration } from '@ionic-native/vibration';
 import { AngularFireDatabase } from 'angularfire2/database';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 // PEDOMETER DATA
 // pedometerData.startDate; -> ms since 1970
@@ -24,6 +26,13 @@ import * as moment from 'moment';
 export class PedometerProvider {
   deviceId: string;
   sessionId: number;
+  mark250: boolean = false;
+  mark500: boolean = false;
+  mark1000: boolean = false;
+  mark2500: boolean = false;
+  mark5000: boolean = false;
+  mark7500: boolean = false;
+  mark10000: boolean = false;
   constructor(
     private toastCtrl: ToastController,
     private insomnia: Insomnia,
@@ -31,6 +40,7 @@ export class PedometerProvider {
     private pedometer: Pedometer,
     private geolocation: Geolocation,
     private deviceMotion: DeviceMotion,
+    private vibration: Vibration,
     private db: AngularFireDatabase,
     public events: Events
   ) {
@@ -54,6 +64,9 @@ export class PedometerProvider {
       .then(() => {
         this.pedometer.startPedometerUpdates()
           .subscribe((pedometerData: IPedometerData) => {
+            _.forEach([250, 500, 1000, 2500, 5000, 7500, 10000], num => {
+              if (pedometerData.numberOfSteps > num && !this[`mark${num}`]) this.vibrateAndToast(num);
+            });
             const now = moment().unix();
             this.geolocation.getCurrentPosition().then((geolocationData) => {
               // Get the device current acceleration
@@ -120,7 +133,25 @@ export class PedometerProvider {
           position: 'bottom'
         });
         toast.present();
+        this.mark250 = false;
+        this.mark500 = false;
+        this.mark1000 = false;
+        this.mark2500 = false;
+        this.mark5000 = false;
+        this.mark7500 = false;
+        this.mark10000 = false;
       })
       .catch(err => console.log(err));
+  }
+
+  vibrateAndToast(num: number): void {
+    this.vibration.vibrate([500, 200, 500]);
+    const toast = this.toastCtrl.create({
+      message: `Reached ${num} steps!`,
+      duration: 3000,
+      position: 'bottom'
+    });
+    toast.present();
+    this[`mark${num}`] = true;
   }
 }

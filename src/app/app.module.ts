@@ -16,6 +16,7 @@ import { Insomnia } from '@ionic-native/insomnia';
 import { Device } from '@ionic-native/device';
 import { DeviceMotion } from '@ionic-native/device-motion';
 import { GoogleMaps } from '@ionic-native/google-maps';
+import { Vibration } from '@ionic-native/vibration';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
@@ -53,6 +54,7 @@ import { PedometerProvider } from '../providers/pedometer/pedometer';
     Insomnia,
     Device,
     DeviceMotion,
+    Vibration,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     PedometerProvider
   ]
