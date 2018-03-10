@@ -55,7 +55,7 @@ export class PedometerProvider {
         this.pedometer.startPedometerUpdates()
           .subscribe((pedometerData: IPedometerData) => {
             const now = moment().unix();
-            this.geolocation.getCurrentPosition().then((geolocationData: Geoposition) => {
+            this.geolocation.getCurrentPosition().then((geolocationData) => {
               // Get the device current acceleration
               this.deviceMotion.getCurrentAcceleration().then(
                 (accelerationData: DeviceMotionAccelerationData) => this.savePedometer(now, pedometerData, geolocationData, accelerationData),
@@ -74,17 +74,26 @@ export class PedometerProvider {
   }
 
   savePedometer(timestamp: number, pedometerData: IPedometerData, geolocationData: Geoposition, accelerationData: DeviceMotionAccelerationData): void {
+    const geolocationPoint = {
+      latitude: geolocationData.coords.latitude,
+      longitude: geolocationData.coords.longitude,
+      accuracy: geolocationData.coords.accuracy,
+      altitude: geolocationData.coords.altitude,
+      altitudeAccuracy: geolocationData.coords.altitudeAccuracy,
+      speed: geolocationData.coords.speed
+    };
+    console.log('geolocationPoint', geolocationPoint);
     const payload = {
       device: this.deviceId,
       session: this.sessionId,
       timestamp: timestamp,
       pedometer: pedometerData,
-      geolocation: geolocationData,
+      geolocation: geolocationPoint,
       acceleration: accelerationData
     };
     this.db
       .database
-      .ref(`fitness/devices/${this.deviceId}/sessions/${this.sessionId}/${timestamp}`)
+      .ref(`fitness/devices/${this.deviceId}/sessions/${this.sessionId}/data/${timestamp}`)
       .set(payload)
       .then(() => {
         this.events.publish('data:saved', payload);

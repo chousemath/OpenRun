@@ -1,6 +1,6 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Home</ion-title>
+  <ion-navbar color="primary">
+    <ion-title>Running Session</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -11,38 +11,36 @@
       Instructions
     </ion-card-header>
     <ion-card-content>
-      Press the bottom in the bottom right corner to start a new pedometer session. Once a session is activated, the exit button should appear where the session start button used to be.
+      <p>
+        Press the bottom in the bottom right corner to start a new pedometer session. Once a session is activated, the exit button should appear where the session start button used to be.
+      </p>
     </ion-card-content>
   </ion-card>
 
   <ion-list *ngIf="sessionActive && sessionData">
     <ion-item>
-      <h2>Device ID</h2>
-      <p>{{ sessionData.device }}</p>
-    </ion-item>
-    <ion-item>
-      <h2>Session ID</h2>
-      <p>{{ sessionData.session }}</p>
-    </ion-item>
-    <ion-item>
-      <h2>Timestamp</h2>
-      <p>{{ sessionData.timestamp }}</p>
-    </ion-item>
-    <ion-item>
       <h2>Acceleration-X</h2>
-      <p>{{ sessionData.acceleration.x }}</p>
+      <ion-note item-end>{{ sessionData.acceleration.x }}</ion-note>
     </ion-item>
     <ion-item>
       <h2>Acceleration-Y</h2>
-      <p>{{ sessionData.acceleration.y }}</p>
+      <ion-note item-end>{{ sessionData.acceleration.y }}</ion-note>
     </ion-item>
     <ion-item>
       <h2>Acceleration-Z</h2>
-      <p>{{ sessionData.acceleration.z }}</p>
+      <ion-note item-end>{{ sessionData.acceleration.z }}</ion-note>
+    </ion-item>
+    <ion-item>
+      <h2>Latitude</h2>
+      <ion-note item-end>{{ sessionData.geolocation.latitude }}</ion-note>
+    </ion-item>
+    <ion-item>
+      <h2>Longitude</h2>
+      <ion-note item-end>{{ sessionData.geolocation.longitude }}</ion-note>
     </ion-item>
     <ion-item>
       <h2>Number of Steps</h2>
-      <p>{{ sessionData.pedometer.numberOfSteps }}</p>
+      <ion-note item-end>{{ sessionData.pedometer.numberOfSteps }}</ion-note>
     </ion-item>
   </ion-list>
 
