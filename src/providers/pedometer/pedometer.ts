@@ -1,31 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Events, ToastController } from 'ionic-angular';
+import { ToastController } from 'ionic-angular';
 import { Insomnia } from '@ionic-native/insomnia';
 import { Device } from '@ionic-native/device';
 import { Pedometer, IPedometerData } from '@ionic-native/pedometer';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation';
 import { DeviceMotion, DeviceMotionAccelerationData } from '@ionic-native/device-motion';
 import { Vibration } from '@ionic-native/vibration';
+import { TextToSpeech } from '@ionic-native/text-to-speech';
 import { AngularFireDatabase } from 'angularfire2/database';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-
-// PEDOMETER DATA
-// pedometerData.startDate; -> ms since 1970
-// pedometerData.endDate; -> ms since 1970
-// pedometerData.numberOfSteps;
-// pedometerData.distance;
-// pedometerData.floorsAscended;
-// pedometerData.floorsDescended;
-
-// GEOLOCATION DATA
-// geolocationData.coords.latitude
-// geolocationData.coords.longitude
 
 @Injectable()
 export class PedometerProvider {
   deviceId: string;
   sessionId: number;
+  sessionData: any;
   mark250: boolean = false;
   mark500: boolean = false;
   mark1000: boolean = false;
@@ -41,8 +31,8 @@ export class PedometerProvider {
     private geolocation: Geolocation,
     private deviceMotion: DeviceMotion,
     private vibration: Vibration,
-    private db: AngularFireDatabase,
-    public events: Events
+    private tts: TextToSpeech,
+    private db: AngularFireDatabase
   ) {
     this.deviceId = this.device.uuid;
   }
@@ -68,7 +58,7 @@ export class PedometerProvider {
               if (pedometerData.numberOfSteps > num && !this[`mark${num}`]) this.vibrateAndToast(num);
             });
             const now = moment().unix();
-            this.geolocation.getCurrentPosition().then((geolocationData) => {
+            this.geolocation.getCurrentPosition().then((geolocationData: Geoposition) => {
               // Get the device current acceleration
               this.deviceMotion.getCurrentAcceleration().then(
                 (accelerationData: DeviceMotionAccelerationData) => this.savePedometer(now, pedometerData, geolocationData, accelerationData),
@@ -82,6 +72,7 @@ export class PedometerProvider {
           position: 'bottom'
         });
         toast.present();
+        this.tts.speak('Pedometer has started!');
       })
       .catch(err => console.log(err));
   }
@@ -95,7 +86,6 @@ export class PedometerProvider {
       altitudeAccuracy: geolocationData.coords.altitudeAccuracy,
       speed: geolocationData.coords.speed
     };
-    console.log('geolocationPoint', geolocationPoint);
     const payload = {
       device: this.deviceId,
       session: this.sessionId,
@@ -108,9 +98,7 @@ export class PedometerProvider {
       .database
       .ref(`fitness/devices/${this.deviceId}/sessions/${this.sessionId}/data/${timestamp}`)
       .set(payload)
-      .then(() => {
-        this.events.publish('data:saved', payload);
-      })
+      .then(() => this.sessionData = payload)
       .catch(err => console.log(err));
   }
 
@@ -126,13 +114,13 @@ export class PedometerProvider {
     this.pedometer
       .stopPedometerUpdates()
       .then(() => {
-        this.events.publish('pedometer:stopped');
         const toast = this.toastCtrl.create({
           message: 'Pedometer has been stopped',
           duration: 1500,
           position: 'bottom'
         });
         toast.present();
+        this.tts.speak('Pedometer has been stopped!');
         this.mark250 = false;
         this.mark500 = false;
         this.mark1000 = false;
@@ -153,5 +141,6 @@ export class PedometerProvider {
     });
     toast.present();
     this[`mark${num}`] = true;
+    this.tts.speak(`You have reached ${num} steps!`);
   }
 }

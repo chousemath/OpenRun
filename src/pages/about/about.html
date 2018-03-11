@@ -3,9 +3,17 @@
     <ion-title>
       Map
     </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="refreshMap()">
+        <ion-icon name="ios-refresh-outline"></ion-icon>
+      </button>
+      <button ion-button icon-only (click)="getLatestMap()">
+        <ion-icon name="ios-refresh-circle-outline"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <div style="width: 100vw; height: 100vh;" id="map"></div>
+  <div style="width: 100vw; height: 100vh; z-index: 1;" id="map"></div>
 </ion-content>

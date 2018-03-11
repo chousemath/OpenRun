@@ -17,6 +17,8 @@ import { Device } from '@ionic-native/device';
 import { DeviceMotion } from '@ionic-native/device-motion';
 import { GoogleMaps } from '@ionic-native/google-maps';
 import { Vibration } from '@ionic-native/vibration';
+import { TextToSpeech } from '@ionic-native/text-to-speech';
+import { Shake } from '@ionic-native/shake';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
@@ -55,6 +57,8 @@ import { PedometerProvider } from '../providers/pedometer/pedometer';
     Device,
     DeviceMotion,
     Vibration,
+    TextToSpeech,
+    Shake,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     PedometerProvider
   ]
