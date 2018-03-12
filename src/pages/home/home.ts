@@ -10,6 +10,7 @@ import { Observable, Subscription } from "rxjs";
 export class HomePage {
   sessionActive = false;
   sessionData: any;
+  dataCount: number = 0;
   dataInterval: Observable<any>;
   dataSubscription: Subscription;
   constructor(
@@ -25,6 +26,7 @@ export class HomePage {
     this.pedometerProvider.start();
     this.dataSubscription = this.dataInterval.subscribe(() => {
       this.sessionData = this.pedometerProvider.sessionData;
+      this.dataCount = this.pedometerProvider.dataCount;
     });
   }
 

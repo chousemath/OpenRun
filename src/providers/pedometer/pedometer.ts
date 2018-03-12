@@ -16,6 +16,7 @@ export class PedometerProvider {
   deviceId: string;
   sessionId: number;
   sessionData: any;
+  dataCount: number = 0;
   mark250: boolean = false;
   mark500: boolean = false;
   mark1000: boolean = false;
@@ -98,7 +99,10 @@ export class PedometerProvider {
       .database
       .ref(`fitness/devices/${this.deviceId}/sessions/${this.sessionId}/data/${timestamp}`)
       .set(payload)
-      .then(() => this.sessionData = payload)
+      .then(() => {
+        this.sessionData = payload;
+        this.dataCount++;
+      })
       .catch(err => console.log(err));
   }
 
@@ -128,6 +132,7 @@ export class PedometerProvider {
         this.mark5000 = false;
         this.mark7500 = false;
         this.mark10000 = false;
+        this.dataCount = 0;
       })
       .catch(err => console.log(err));
   }

@@ -19,6 +19,10 @@
 
   <ion-list *ngIf="sessionActive && sessionData">
     <ion-item>
+      <h2>Total Data Points</h2>
+      <ion-note item-end>{{ dataCount }}</ion-note>
+    </ion-item>
+    <ion-item>
       <h2>Acceleration-X</h2>
       <ion-note item-end>{{ sessionData.acceleration.x }}</ion-note>
     </ion-item>

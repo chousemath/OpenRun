@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, PopoverController } from 'ionic-angular';
 import {
   GoogleMaps,
   GoogleMap,
@@ -15,6 +15,7 @@ import { Device } from '@ionic-native/device';
 import { Shake } from '@ionic-native/shake';
 import { Subscription } from 'rxjs/Subscription';
 import * as _ from 'lodash';
+import { PopoverSelectComponent } from '../../components/popover-select/popover-select';
 
 @Component({
   selector: 'page-about',
@@ -27,10 +28,12 @@ export class AboutPage {
   bounds: Array<{ lat: number, lng: number }> = [];
   firstRender: boolean;
   shake$: Subscription;
+  sessions: Array<any> = [];
   constructor(
     public navCtrl: NavController,
     public db: AngularFireDatabase,
     public device: Device,
+    public popoverCtrl: PopoverController,
     private geolocation: Geolocation,
     private shake: Shake
   ) {
@@ -73,10 +76,17 @@ export class AboutPage {
     }
     this.firstRender = true;
     this.points$ = this.db
-      .list(`fitness/devices/${this.device.uuid}/sessions`, ref => ref.limitToLast(1))
+      .list(`fitness/devices/${this.device.uuid}/sessions`)
       .valueChanges()
       .subscribe((sessions: any) => {
-        this.points = _.values(_.values(sessions)[0].data);
+        this.sessions = _.map(sessions, s => {
+          return {
+            timestamp: s.timestamp,
+            data: _.values(s.data)
+          }
+        });
+        _.reverse(this.sessions);
+        this.points = this.sessions[0].data;
         this.bounds = _.map(this.points, p => {
           return { lat: p.geolocation.latitude, lng: p.geolocation.longitude };
         });
@@ -100,6 +110,23 @@ export class AboutPage {
 
   getLatestMap() {
     this.renderPoints();
+  }
+
+  showSessions() {
+    const popover = this.popoverCtrl.create(PopoverSelectComponent, {
+      sessions: this.sessions
+    });
+    popover.onDidDismiss(session => {
+      if (session) {
+        this.points$.unsubscribe();
+        this.points = session.data;
+        this.bounds = _.map(this.points, p => {
+          return { lat: p.geolocation.latitude, lng: p.geolocation.longitude };
+        });
+        this.refreshMap();
+      }
+    });
+    popover.present();
   }
 
 }

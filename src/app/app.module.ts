@@ -26,13 +26,16 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { firebaseConfig } from '../environments/environment';
 import { PedometerProvider } from '../providers/pedometer/pedometer';
 
+import { PopoverSelectComponent } from '../components/popover-select/popover-select';
+
 @NgModule({
   declarations: [
     MyApp,
     AboutPage,
     ContactPage,
     HomePage,
-    TabsPage
+    TabsPage,
+    PopoverSelectComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +49,8 @@ import { PedometerProvider } from '../providers/pedometer/pedometer';
     AboutPage,
     ContactPage,
     HomePage,
-    TabsPage
+    TabsPage,
+    PopoverSelectComponent
   ],
   providers: [
     StatusBar,

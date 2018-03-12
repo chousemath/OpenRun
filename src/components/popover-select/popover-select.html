@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-navbar color="dark">
+    <ion-title>
+      Session History
+    </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="dismiss(null)">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <button ion-item *ngFor="let session of sessions" (click)="dismiss(session)">
+      {{ formatTimestamp(session.timestamp) }}
+    </button>  
+  </ion-list>
+</ion-content>
+  
